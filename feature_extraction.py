@@ -2,6 +2,8 @@ import scipy.signal as sgn
 import numpy as np
 import scipy as sp
 import pywt
+import stockwell as sw
+
 # from mne.time_frequency import tfr_stockwell
 
 def csp(x, y):
@@ -39,11 +41,15 @@ def stft_fe(x, fs=250):
         res.append(np.array(cur_trial).T)
     return np.array(res)
 
-# def stock_well_fe(x):
-#     from mne.datasets import somato
-
-#     power, itc = tfr_stockwell(x, fmin=8., fmax=30., return_itc=True)
-#     pass
+def stockwell_fe(x):
+    ci = x.shape[0]; cj = x.shape[-1]; res = []
+    for i in range(ci):
+        cur_trial = []
+        for j in range(cj):
+            coef = sw.st(x[i,:,j], 8, 30)
+            cur_trial.append(coef)
+        res.append(np.array(cur_trial).T)
+    return np.array(res)
 
 def wavelet_1dc_fe(x):
     # continuous one dimensional wavelet transform
@@ -51,15 +57,17 @@ def wavelet_1dc_fe(x):
     for i in range(ci):
         cur_trial = []
         for j in range(cj):
-            coef, _ = pywt.cwt(x[i,:,j], np.arange(8, 30), 'morl', sampling_period=0.004)
+            coef, _ = pywt.cwt(x[i,:,j], np.arange(8, 31), 'morl', sampling_period=0.004)
             cur_trial.append(coef)
         res.append(np.array(cur_trial).T)
     return np.array(res)
 
 
 if __name__ == '__main__':
-    raw = np.load('data/comp_iva/test.npz', allow_pickle=True)
+    raw = np.load('data/comp_iv2a/test.npz', allow_pickle=True)
     x = raw['data'][0]['x']
     y = raw['data'][0]['y']
     # a, b, c = stft_fe(x)
-    wavelet_1dc_fe(x)
+    # wavelet_features = wavelet_1dc_fe(x)
+    stft_features = wavelet_1dc_fe(x)
+        
