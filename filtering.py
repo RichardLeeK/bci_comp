@@ -16,3 +16,6 @@ def arr_bandpass_filter(data, lowcut, highcut, fs, order=5):
     cur_y = bandpass_filter(cur_data, lowcut, highcut, fs, order)
     y[:,i] = cur_y
   return y
+
+
+  
